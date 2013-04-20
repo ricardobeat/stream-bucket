@@ -37,19 +37,23 @@ Install
 Use cases
 ---------
 
-Consolidate data from multiple LevelDB read streams:
+Gather data from multiple LevelDB read streams:
 
-    var bucket = new stream.Bucket({ objectMode: true })
-    bucket.on('end', function(places){
-        next(places)
-    })
-    ['places:ny', 'places:sf', 'places:sp'].forEach(function(key){
-        levelup.createReadStream({ start: key, limit: 10 }).pipe(bucket)
-    })
+    function getPlaces (cities) {
+        var bucket = new stream.Bucket({ objectMode: true })
+        bucket.on('end', next)
+        cities.forEach(function(city){
+            var start = 'places:' + city
+            levelup.createReadStream({ start: start, limit: 10 }).pipe(bucket)
+        })
+    }
+
+    getPlaces(['NY', 'SF', 'SP', 'POA'])
 
 #### references
 
 For a more complex solution that preserves data order for each piped stream see https://github.com/felixge/node-combined-stream
 
 written by [@ricardobeat](http://twitter.com/ricardobeat)
+
 Released under the [MIT License](http://ricardo.mit-license.org)
